@@ -1,0 +1,33 @@
+{
+  "name": "taction",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "bin": {
+    "taction": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean  --tsconfig tsconfig.json",
+    "postinstall": "tsup src/index.ts --format cjs,esm --dts --clean  --tsconfig tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "github actions",
+    "typescript",
+    "cli",
+    "types"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "yaml": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/commander": "^2.12.5",
+    "@types/node": "^22.10.1",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
