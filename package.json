@@ -1,6 +1,6 @@
 {
   "name": "taction",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "./dist/index.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean  --tsconfig tsconfig.json",
-    "postinstall": "tsup src/index.ts --format cjs,esm --dts --clean  --tsconfig tsconfig.json",
+    "prepublish": "pnpm build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
