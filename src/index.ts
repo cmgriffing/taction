@@ -16,11 +16,11 @@ program
   .description(
     "Parse the an action.yml file and generate typescript types for the inputs and outputs"
   )
-  .argument("input", "path of action.yml file to parse")
-  .argument("output", "path of typed core file to output")
-  .action(async (input, output, options) => {
+  .argument("infile", "path of action.yml file to parse")
+  .argument("outfile", "path of typed core file to output")
+  .action(async (infile, outfile, options) => {
     try {
-      const yamlText = await fs.promises.readFile(input, "utf8");
+      const yamlText = await fs.promises.readFile(infile, "utf8");
       const actionYaml = yaml.parse(yamlText);
 
       const stringInputs: string[] = [];
@@ -50,7 +50,7 @@ program
 
       const typedCore = renderTypedCore(stringInputs, booleanInputs, outputs);
 
-      await fs.promises.writeFile(output, typedCore);
+      await fs.promises.writeFile(outfile, typedCore);
     } catch (error) {
       console.error(error);
       process.exit(1);
@@ -77,7 +77,7 @@ type BooleanInputs = ${
 
 type Outputs = ${outputs.map((output) => `'${output}'`).join(" | ") || "''"}
 
-export const typedCore = {
+const typedCore = {
   ...core,
   getInput: (inputName: StringInputs): string => core.getInput(inputName),
   getBooleanInput: (inputName: BooleanInputs): boolean =>
@@ -85,5 +85,7 @@ export const typedCore = {
   setOutput: (outputName: Outputs, value: any) =>
     core.setOutput(outputName, value)
 }
+
+export default typedCore;
 `;
 }

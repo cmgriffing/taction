@@ -17,7 +17,7 @@
     "cli",
     "types"
   ],
-  "author": "",
+  "author": "Chris Griffing <cmgriffing@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "commander": "^12.1.0",
