@@ -51,6 +51,8 @@ program
       const typedCore = renderTypedCore(stringInputs, booleanInputs, outputs);
 
       await fs.promises.writeFile(outfile, typedCore);
+
+      console.log(`Generated typed GitHub Actions core at ${outfile}`);
     } catch (error) {
       console.error(error);
       process.exit(1);
