@@ -4,6 +4,15 @@ import fs from "fs";
 import yaml from "yaml";
 import { program } from "commander";
 
+import type {
+  ChoiceInput,
+  StringInputMetadata,
+  BooleanInputMetadata,
+  ChoiceInputMetadata,
+  InputMetadata,
+} from "./types";
+import { renderTypedCore } from "./utils";
+
 program
   .name("taction")
   .description(
@@ -25,20 +34,25 @@ program
 
       const stringInputs: string[] = [];
       const booleanInputs: string[] = [];
+      const choiceInputs: ChoiceInput[] = [];
       const outputs: string[] = [];
 
       const inputsSection: Record<
         string,
-        { required?: boolean; type?: TypedValueType }
+        StringInputMetadata | BooleanInputMetadata | ChoiceInputMetadata
       > = actionYaml.inputs || {};
-      const outputsSection: Record<
-        string,
-        { required?: boolean; type?: TypedValueType }
-      > = actionYaml.outputs || {};
+      const outputsSection: Record<string, InputMetadata> =
+        actionYaml.outputs || {};
 
       Object.entries(inputsSection).forEach(([key, input]) => {
         if (input.type === "boolean") {
           booleanInputs.push(key);
+        } else if (input.type === "choice") {
+          const choiceInput: ChoiceInput = {
+            name: key,
+            options: input.options || [],
+          };
+          choiceInputs.push(choiceInput);
         } else {
           stringInputs.push(key);
         }
@@ -48,7 +62,12 @@ program
         outputs.push(key);
       });
 
-      const typedCore = renderTypedCore(stringInputs, booleanInputs, outputs);
+      const typedCore = renderTypedCore(
+        stringInputs,
+        booleanInputs,
+        choiceInputs,
+        outputs
+      );
 
       await fs.promises.writeFile(outfile, typedCore);
 
@@ -60,34 +79,3 @@ program
   });
 
 program.parse();
-
-type TypedValueType = "string" | "boolean";
-
-function renderTypedCore(
-  stringInputs: string[],
-  booleanInputs: string[],
-  outputs: string[]
-) {
-  return `import * as core from '@actions/core'
-
-type StringInputs = ${
-    stringInputs.map((input) => `'${input}'`).join(" | ") || "''"
-  }
-type BooleanInputs = ${
-    booleanInputs.map((input) => `'${input}'`).join(" | ") || "''"
-  }
-
-type Outputs = ${outputs.map((output) => `'${output}'`).join(" | ") || "''"}
-
-const typedCore = {
-  ...core,
-  getInput: (inputName: StringInputs): string => core.getInput(inputName),
-  getBooleanInput: (inputName: BooleanInputs): boolean =>
-    core.getBooleanInput(inputName),
-  setOutput: (outputName: Outputs, value: any) =>
-    core.setOutput(outputName, value)
-}
-
-export default typedCore;
-`;
-}

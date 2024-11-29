@@ -63,9 +63,13 @@ The typed core is a wrapper of the core module with the following modifications:
 
 - `getInput(inputName: StringInputs): string`
 - `getBooleanInput(inputName: BooleanInputs): boolean`
+- `getNumberInput(inputName: StringInputs): number`
+- `getChoiceInput<T extends keyof IChoiceInputs>(inputName: T): IChoiceInputs[T]`
 - `setOutput(outputName: Outputs, value: any)`
 
 `StringInputs` and `BooleanInputs` are the union of all the inputs that are strings and booleans respectively.
+
+`IChoiceInputs` is an interface with the keys of all the choice inputs and the types for the keys are the union of all the options for that input.
 
 `Outputs` is the union of all the outputs.
 
